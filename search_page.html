@@ -1,0 +1,865 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <title>Title</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- <link rel="stylesheet" href="new_list.css"> -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+        integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- <script src="swipe.js"></script> -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;0,1000;1,400;1,500;1,600;1,700;1,800;1,900;1,1000&display=swap"
+        rel="stylesheet">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- search only version -->
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.24.0/dist/algoliasearch-lite.umd.js"
+        integrity="sha256-b2n6oSgG4C1stMT/yc/ChGszs9EY/Mhs6oltEjQbFCQ=" crossorigin="anonymous"></script>
+
+    <!-- default version -->
+    <script src="https://cdn.jsdelivr.net/npm/algoliasearch@4.24.0/dist/algoliasearch.umd.js"
+        integrity="sha256-xuCFeRamFnnQX5L73AAMtQnz1S1xwihimc5dVgI5Kq8=" crossorigin="anonymous"></script>
+
+</head>
+
+<style>
+    body {
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .form-text {
+        display: none;
+        padding-left: 5px;
+        color: red !important;
+    }
+
+    .form-group {
+        margin-bottom: 0;
+        width: 100%;
+    }
+
+    .form-control {
+        border-radius: 10px;
+        /* height: 45px; */
+        background: #f3f5fc;
+        border: 1px solid #ced8fb;
+    }
+
+    .searchBar {
+        position: sticky;
+        width: 100%;
+        padding: 15px 15px;
+        background: white;
+        top: 0;
+        z-index: 99;
+        display: flex;
+        gap: 10px;
+        border-bottom: 2px solid #f3f5fc;
+        margin-bottom: 10px;
+    }
+
+    .form-control:focus {
+        outline: none;
+        box-shadow: none;
+        border-color: #543ae5;
+        border-width: 2px;
+    }
+
+    .search-cont {
+        padding: 0 15px;
+        display: none;
+    }
+
+    .search-results {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .search-text {
+        font-size: 14px;
+        color: #543ae5;
+        font-weight: 700;
+        /* display: none; */
+        position: absolute;
+        right: 30px;
+        top: 23px;
+        flex-direction: column;
+    }
+
+    .back-btn img {
+        width: 13px;
+    }
+
+    .subject-head {
+        font-size: 20px;
+        font-weight: 700;
+    }
+
+    .submit-button button {
+        border: none;
+        width: 60%;
+    }
+
+    .subject-list {
+        display: flex;
+        gap: 10px;
+        /* margin: 15px 0px; */
+        /* overflow-x: scroll; */
+        padding: 0 0 10px;
+        flex-wrap: wrap;
+    }
+
+    .subject-img {
+        width: 40px;
+        height: 40px;
+        margin: auto;
+    }
+
+    .subject-imgs {
+        text-align: center;
+    }
+
+    .subject-content {
+        width: 100px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        justify-content: center;
+        padding: 10px;
+        /* border: 2px solid; */
+        border-radius: 10px;
+    }
+
+    .subject-name {
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .details {
+        padding: 0 15px 15px;
+        overflow: hidden;
+    }
+
+    .suggestions-cont,
+    .teachers-cont {
+        padding: 0 15px 15px;
+    }
+
+    .values {
+        border: 1px solid black;
+        border-radius: 6px;
+        padding: 2px 10px;
+    }
+
+    .suggestions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .teacher-det {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .teacher-name {
+        font-weight: 700;
+    }
+
+    .teacher-sub {
+        color: #4553B9;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    .teachers {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .teacher {
+        width: calc(100%/2);
+    }
+
+    .demosubjectstabs {
+        padding: 0 15px 0 15px;
+        display: flex;
+        /* overflow: scroll; */
+        gap: 15px;
+    }
+
+    .tabsubjectfilter {
+        padding: 5px 20px;
+        /* border: 1.3px solid #F0F0F2; */
+        color: #404040;
+        /* border-radius: 20px; */
+        /* margin-right: 8px; */
+        display: flex;
+        white-space: nowrap;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+    .tabsschedule {
+        /* display: -webkit-inline-box; */
+        /* margin-bottom: 25px; */
+        overflow-x: scroll;
+        width: 100%;
+    }
+
+    .tabsschedule {
+        /* display: -webkit-inline-box; */
+        /*margin-bottom: 25px;*/
+        overflow-x: scroll;
+        width: 100%;
+        border-bottom: 2px solid #f3f5fc;
+    }
+
+    .tabschedule.active {
+        border-bottom: 2px solid #543ae3;
+        /*margin-bottom: 12px;*/
+        /* background: #F0F0F2;
+        border: 1.3px solid #404040; */
+        color: #543ae3;
+        font-weight: 600;
+    }
+
+    .tabschedule.active .tabschedulexx p {
+        color: #0216C1;
+    }
+
+    .tabschedulexx p {
+        margin: 0;
+        font-weight: 600;
+    }
+
+    .tabsschedule::-webkit-scrollbar {
+        display: none;
+    }
+
+    .class_thumbnail {
+        width: 76px;
+        border-radius: 8px;
+        height: 108px;
+        margin: auto;
+    }
+
+    .class-cont,
+    .all-class-cont {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .class_box {
+        display: flex;
+        gap: 15px;
+    }
+
+    .subject_name {
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .class_details {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .class_name {
+        font-weight: 700;
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 1;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+    }
+
+    .teacher_name {
+        font-size: 14px;
+    }
+
+    .basic__img {
+        background-color: #fff;
+        display: flex;
+        flex-direction: column;
+        position: relative;
+        transition: all 0.7s;
+        min-height: 90vh;
+    }
+
+    .ebook-img {
+        width: 76px;
+        height: 108px;
+        border-radius: 8px;
+    }
+
+    .lect-name {
+        overflow: hidden;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        line-clamp: 2;
+        -webkit-box-orient: vertical;
+        font-weight: 700;
+    }
+
+    .ebook_box {
+        display: flex;
+        /* flex-direction: column; */
+        /* width: calc(100% / 3 - 10px); */
+        gap: 15px;
+    }
+
+    .ebook-cont,
+    .all-ebook-cont {
+        display: flex;
+        /* flex-wrap: wrap; */
+        gap: 15px;
+        padding: 15px;
+        flex-direction: column;
+    }
+
+    .heading {
+        font-size: 18px;
+        font-weight: 700;
+        padding: 10px 15px 0;
+    }
+
+    .cta {
+        text-align: center;
+        padding: 10px;
+        border: 2px solid #543ae3;
+        border-radius: 8px;
+        width: 100%;
+        font-weight: 700;
+        border-bottom: 5px solid #543ae3;
+        color: #543ae4;
+    }
+
+    .more-cta {
+        width: 100%;
+        padding: 0 15px 0;
+        display: flex;
+    }
+
+    .ebook_details {
+        display: flex;
+        flex-direction: column;
+    }
+</style>
+
+
+<body>
+    <div id="search-cont">
+        <div class="searchBar">
+            <!-- <div class="back-btn" style="display: flex;">
+                <img src="https://d2n7zouke881gi.cloudfront.net/randomUploads/webUsage/back.svg" alt="">
+            </div> -->
+            <div class="form-group">
+                <input type="text" class="form-control" name="" id="userSearch" aria-describedby="helpId"
+                    placeholder="Search for users">
+                <small id="helpId" class="form-text text-muted">Help text</small>
+            </div>
+            <div class="search-text">
+                Search
+            </div>
+        </div>
+    </div>
+
+    <div class="first-set">
+
+        <div id="product-details">
+            <div class="details">
+                <div class="subject-head" style="font-size: 20px;margin: 0 0 15px 0;    ">
+                    Subjects
+                </div>
+
+                <div class="subject-list">
+                    <div class="subject-imgs">
+                        <!-- <div class="subject-img"> -->
+                        <div class="subject-content" data-value="00A0DC">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/Physics.svg"
+                                alt="" class="subject-img">
+                            <!-- </div> -->
+                            <div class="subject-name">भौतिक विज्ञान</div>
+                        </div>
+
+                    </div>
+                    <div class="subject-imgs">
+                        <div class="subject-content" data-value="9764CF">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/Chemistry.svg"
+                                alt="" class="subject-img">
+                            <div class="subject-name">रसायन विज्ञान</div>
+                        </div>
+                    </div>
+                    <div class="subject-imgs">
+                        <div class="subject-content" data-value="4553B9">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/Biology.svg"
+                                alt="" class="subject-img">
+                            <div class="subject-name">जीव विज्ञान</div>
+                        </div>
+                    </div>
+                    <div class="subject-imgs">
+                        <div class="subject-content" data-value="DE792B">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/Maths.svg"
+                                alt="" class="subject-img">
+                            <div class="subject-name">गणित</div>
+                        </div>
+                    </div>
+                    <div class="subject-imgs">
+                        <div class="subject-content" data-value="DD3086">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/Hindi.svg"
+                                alt="" class="subject-img">
+                            <div class="subject-name">हिंदी</div>
+                        </div>
+                    </div>
+                    <div class="subject-imgs">
+                        <div class="subject-content" data-value="8A3A77">
+                            <img src="https://vidyakul-public.s3.ap-south-1.amazonaws.com/uploads/new/questionsimg/English.svg"
+                                alt="" class="subject-img">
+                            <div class="subject-name">अंग्रेजी</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="suggestions-cont">
+            <div class="subject-head" style="font-size: 20px;margin: 0 0 15px 0;    ">
+                Suggestions
+            </div>
+
+            <div class="suggestions">
+                <span class="values">Noun</span>
+                <span class="values">Trignometry</span>
+                <span class="values">Intrgration</span>
+                <span class="values">Anu sir</span>
+                <span class="values">Kuldeep sir</span>
+                <span class="values">Thermodynamics</span>
+            </div>
+        </div>
+
+        <div class="teachers-cont">
+            <div class="subject-head" style="font-size: 20px;margin: 0 0 15px 0;    ">
+                Top Teachers
+            </div>
+
+            <div class="teachers">
+                <div class="teacher">
+                    <img src="" alt="" class="teacher-img">
+                    <div class="teacher-det">
+                        <span class="teacher-name">Kuldeep Sir</span>
+                        <span class="teacher-sub">
+                            Chemistry
+                        </span>
+                    </div>
+
+                </div>
+                <div class="teacher">
+                    <img src="" alt="" class="teacher-img">
+                    <div class="teacher-det">
+                        <span class="teacher-name">Anu Sir</span>
+                        <span class="teacher-sub">
+                            Chemistry
+                        </span>
+                    </div>
+
+                </div>
+                <div class="teacher">
+                    <img src="" alt="" class="teacher-img">
+                    <div class="teacher-det">
+                        <span class="teacher-name">Dinesh Sir</span>
+                        <span class="teacher-sub">
+                            Chemistry
+                        </span>
+                    </div>
+
+                </div>
+                <div class="teacher">
+                    <img src="" alt="" class="teacher-img">
+                    <div class="teacher-det">
+                        <span class="teacher-name">Sourav Sir</span>
+                        <span class="teacher-sub">
+                            Chemistry
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <div class="result-set">
+        <div class="demosubjectstabs tabsschedule">
+            <div class="tabsubjectfilter tabschedule demofirstclickselected active" data-id="all">All</div>
+            <div class="tabsubjectfilter tabschedule " data-id="classes">Classes</div>
+            <div class="tabsubjectfilter tabschedule" data-id="courses">Courses</div>
+            <div class="tabsubjectfilter tabschedule" data-id="ebooks">Pdf's</div>
+            <div class="tabsubjectfilter tabschedule " data-id="live_courses">Live Courses</div>
+        </div>
+
+        <div class="cardsholder democlassesblock">
+
+            <div class="all-cont basic__img all">
+                <div class="classes-cont">
+                    <div class="heading">
+                        Classes
+                    </div>
+                    <div class="all-class-cont">
+
+                    </div>
+                    <div class="more-cta">
+                        <span class="cta">View all classes</span>
+                    </div>
+                </div>
+                <div class="ebooks-cont">
+                    <div class="heading">
+                        Ebooks
+                    </div>
+                    <div class="all-ebook-cont">
+
+                    </div>
+                    <div class="more-cta">
+                        <span class="cta">View all Ebooks</span>
+                    </div>
+                </div>
+            </div>
+            <div class="class-cont basic__img classes">
+            </div>
+            <div class="pdf-cont basic__img pdfs">
+            </div>
+            <div class="courses-cont basic__img courses">
+            </div>
+            <div class="ebook-cont basic__img ebooks">
+            </div>
+            <div class="live-cont basic__img live_courses">
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+        $(document).ready(function () {
+            var box = document.getElementsByClassName('subject-content');
+            $.each(box, function (index, value) {
+                // console.log($(this).data('value'));
+                var border_color = $(this).data('value');
+                $(this).css('border', '1px solid #' + border_color + '');
+                var rgbaCol = 'rgba(' + parseInt(border_color.slice(-6, -4), 16)
+                    + ',' + parseInt(border_color.slice(-4, -2), 16)
+                    + ',' + parseInt(border_color.slice(-2), 16)
+                    + ',0.1)';
+                $(this).css('background', rgbaCol);
+            });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            if ($('#userSearch').val().length == 0) {
+                $('.search-text').hide();
+            }
+
+            $('.result-set').hide();
+
+            // console.log(567890);
+
+
+            $('.suggestions .values').on('click', function () {
+                var value = $(this).text();
+                // console.log(value);
+                $('#userSearch').val(value);
+
+
+                // console.log($('#userSearch').val().length);
+                // $('.search-text').show();
+
+                $('.first-set').empty();
+                performSearch(value);
+
+            });
+
+            $('.teachers .teacher-name').on('click', function () {
+                var value = $(this).text();
+                // var value = $(this).text().trim().replace(/\s+/g, '');
+                console.log(value);
+                $('#userSearch').val(value);
+
+
+                console.log($('#userSearch').val().length);
+                // $('.search-text').show();
+
+                $('.first-set').empty();
+                performSearch(value);
+
+            });
+
+            $('#userSearch').on('input', function () {
+                var val = $(this).val(); // $(this) refers to the element that triggered the event, which is the input field with id 'userSearch'
+                console.log(val.length);
+
+                if (val.length > 0) {
+                    $('.search-text').show();
+                } else {
+                    $('.search-text').hide();
+                }
+            });
+
+            // $('.search-text').on('click', function () {
+
+            //     var value = $('#userSearch').val();
+            //     console.log(value);
+
+            //     // performSearch(value);
+            //     $('.first-set').hide();
+            //     $('.result-set').show();
+
+            //     // $('#userSearch').val("");
+
+            // });
+
+            $('.tabsschedule .tabschedule').on('click', function (e) {
+                var el = $(this), parentEl = $('.tabsschedule');
+                var myScrollPos = el.offset().left + el.outerWidth(true) / 2 + parentEl.scrollLeft() - parentEl.width() / 2;
+                parentEl.animate({ scrollLeft: myScrollPos }, 300);
+            });
+
+            $(".tabsschedule").on("click", ".tabschedule", function () {
+                var $thiss = $(this);
+                $(".tabsschedule").find(".tabschedule.active").removeClass("active");
+                $thiss.addClass("active");
+                $(".bottomclasssdf").removeClass("active");
+                $(".bottomclasssdf." + $(this).data("id")).addClass("active");
+
+
+                $(".cardsholder.democlassesblock").find(".basic__img").hide();
+                $(".cardsholder.democlassesblock").find("." + $thiss.data("id")).show();
+            });
+
+
+
+
+            // function performSearch(search) {
+            //     $.ajax({
+            //         type: "get",
+            //         url: "https://prod.vidyakul.com/api/v1/new-search-classes",
+            //         data: {
+            //             "search": search,
+            //             "user_id": 263
+            //         },
+            //         success: function (response) {
+            //             console.log(response);
+            //             $('.result-set').show();
+            //             class_ui(response['hits']['classes']);
+            //             ebook_ui(response['hits']['ebooks']);
+
+            //         }
+            //     });
+            // }
+
+
+            // Initialize Algolia client
+            const client = algoliasearch('RC68Y2I23R', 'b1673e408a2c2cf1b7ea23c277e5d5cd'); // Replace with your credentials
+            const index = client.initIndex('vidyakul_search'); // Replace with your index name
+
+
+            // console.log(client);
+            // Listen for input changes in the search box
+
+            $('.search-text').on('click', function () {
+
+                var value = $('#userSearch').val();
+                console.log(value);
+
+
+                index
+                    .search(value)
+                    .then(({ hits }) => {
+                        // Clear previous results
+
+                        console.log(hits);
+                        $('#results').empty();
+
+                        class_ui(hits);
+                        // ebook_ui(response['hits']['ebooks']);
+
+                        // Append new results to the results list
+                        hits.forEach((hit) => {
+                            $('#results').append(`<li class="result-item">${hit.name}</li>`);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Search error:', error);
+                    });
+
+                // performSearch(value);
+                $('.first-set').hide();
+                $('.result-set').show();
+
+                // $('#userSearch').val("");
+
+            });
+
+            $('.subject-imgs').on('click', function () {
+                var value = $(this).find('.subject-name').text();
+                // console.log(value);
+                $('#userSearch').val(value);
+
+                index
+                    .search(value)
+                    .then(({ hits }) => {
+                        // Clear previous results
+
+                        console.log(hits);
+                        class_ui(hits);
+                        $('.first-set').empty();
+                        // ebook_ui(response['hits']['ebooks']);
+
+                        // // Append new results to the results list
+                        // hits.forEach((hit) => {
+                        //     $('#results').append(`<li class="result-item">${hit.name}</li>`);
+                        // });
+                    })
+                    .catch((error) => {
+                        console.error('Search error:', error);
+                    });
+
+
+            });
+
+            function class_ui(classes) {
+                console.log('classes here: '.classes);
+                var class_ui = ""; // Initialize the class_ui variable outside the loop
+                var all_ui = ""; // Initialize the class_ui variable outside the loop
+
+                $.each(classes, function (index, value) {
+                    class_ui += `<div class="class_box">
+            <img src="${value.dummy_thumbnail}" alt="" class="class_thumbnail">
+            <div class="class_details">
+                <div class="subject_name" style="color:${value.subject_color}">${value.subject}</div>
+                <div class="class_name">
+                    ${value.original_name}
+                </div>
+                <div class="teacher_name">
+                    ${value.teacher}
+                </div>
+            </div>
+        </div>`;
+
+                    if (index < 2) {
+
+                        all_ui += `<div class="class_box">
+            <img src="${value.dummy_thumbnail}" alt="" class="class_thumbnail">
+            <div class="class_details">
+                <div class="subject_name" style="color:${value.subject_color}">${value.subject}</div>
+                <div class="class_name">
+                    ${value.class_name}
+                </div>
+                <div class="teacher_name">
+                    ${value.teacher}
+                </div>
+            </div>
+        </div>`;
+                    }
+
+                });
+
+                $('.class-cont').append(class_ui);
+                $('.all-cont .all-class-cont').append(all_ui);
+            }
+
+            function ebook_ui(ebook) {
+                // console.log(ebook);
+                var ebook_data = "";
+                var all_ebook = "";
+
+                $.each(ebook, function (index, value) {
+
+                    value.subject ? ebook_data += `
+                     <div class="ebook_box">
+                    <img src="${value.ebook_thumbnail}" alt=""
+                        class="ebook-img">
+                        <div class="ebook_details">
+                    <span class="subject-name" style="color: ${value.subject_color}">${value.subject}</span>
+                    <span class="lect-name">${value.original_name}</span>
+                    </div>
+                </div>`: ""
+                        ;
+
+                    if (index < 3) {
+
+                        value.subject ? all_ebook += `
+                     <div class="ebook_box">
+                    <img src="${value.ebook_thumbnail}" alt=""
+                        class="ebook-img">
+                        <div class="ebook_details">
+                    <span class="subject-name" style="color: ${value.subject_color}">${value.subject}</span>
+                    <span class="lect-name">${value.original_name}</span>
+                    </div>
+                </div>` : "";
+                    }
+
+                });
+
+                // console.log(ebook_data);
+
+                $('.ebook-cont').append(ebook_data);
+
+                $('.all-ebook-cont').append(all_ebook);
+
+                $('.ebook-cont').find('.ebook-img').on('error', function () {
+                    $(this).attr('src', "https://dkuddpry619qg.cloudfront.net/singleliveclass/new-single-liveclass/46702/time_2024-05-08_18:51:19.png");
+                });
+                $('.all-ebook-cont').find('.ebook-img').on('error', function () {
+                    $(this).attr('src', "https://dkuddpry619qg.cloudfront.net/singleliveclass/new-single-liveclass/46702/time_2024-05-08_18:51:19.png");
+                });
+
+            }
+
+            // $('#search-box').on('input', function () {
+            //     const query = $(this).val(); // Get the current value of the search box
+
+            //     // Perform a search query
+            //     index
+            //         .search(query)
+            //         .then(({ hits }) => {
+            //             // Clear previous results
+            //             $('#results').empty();
+
+            //             // Append new results to the results list
+            //             hits.forEach((hit) => {
+            //                 $('#results').append(`<li class="result-item">${hit.name}</li>`);
+            //             });
+            //         })
+            //         .catch((error) => {
+            //             console.error('Search error:', error);
+            //         });
+            // });
+
+
+        });
+
+    </script>
+</body>
+
+</html>
